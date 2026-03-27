@@ -1,0 +1,197 @@
+/* Seasonality.module.css */
+
+/* ── 전체 페이지 레이아웃 ── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  
+  /* 사이드바 너비만큼 왼쪽 마진 확보 (프로젝트 설정에 따라 조절) */
+  /* margin-left: var(--nav-w, 0px); 
+  width: calc(100% - var(--nav-w, 0px)); */
+  
+  min-height: calc(100vh - 115px);
+  /* padding: 80px 40px 40px 40px;  */
+  box-sizing: border-box;
+  
+  /* 어두운 네이비 배경색 유지 */
+  background-color: #080c12 !important; 
+  color: #e0e0e0;
+  overflow-x: hidden;
+}
+
+/* ── 상단 필터 영역 ── */
+.filterGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  background: #0e1420; /* 필터바 배경 */
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #1f2d47;
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8fa3c4; /* 라벨 텍스트 색상 */
+}
+
+.filterItem select {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #1f2d47;
+  background: #080c12; 
+  color: #ffffff;
+  font-size: 13px;
+  min-width: 140px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filterItem select:focus {
+  border-color: #4da3ff;
+}
+
+/* ── 조회 버튼 ── */
+.searchBtn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  background: #21304d;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  height: 40px;
+  transition: background 0.2s;
+}
+
+.searchBtn:hover {
+  background: #2f446d;
+}
+
+.searchBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── 차트 컨테이너 ── */
+.chartContainer {
+  flex: 1;
+  background: #0e1420; /* 차트 내부 배경 */
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #1f2d47;
+  min-height: 550px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── 증감률 꺾은선 그래프 스타일 ── */
+.chartLine {
+  fill: none;
+  stroke: #ff9f43; /* 연한 주황색 선 */
+  stroke-width: 3;
+}
+
+.chartPoint {
+  fill: #ffffff;
+  stroke: #ff9f43;
+  stroke-width: 3;
+  cursor: pointer;
+}
+
+/* ── 커스텀 툴팁 ── */
+.customTooltip {
+  padding: 12px;
+  background: #141b2d;
+  border: 1px solid #1f2d47;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #e8f0fe;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 200px;
+}
+
+.tooltipTitle {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 13px;
+  border-bottom: 1px solid #1f2d47;
+  padding-bottom: 4px;
+}
+
+/* ── 커스텀 툴팁 역별 ── */
+.customTooltip2 {
+  padding: 12px;
+  background: #141b2d;
+  border: 1px solid #1f2d47;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #e8f0fe;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 250px;
+}
+
+.tooltipTitle2 {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 13px;
+  border-bottom: 1px solid #1f2d47;
+  padding-bottom: 4px;
+}
+
+.growthPositive { color: #f5365c; font-weight: 700; } /* 상승 시 붉은색 */
+.growthNegative { color: #5e72e4; font-weight: 700; } /* 하락 시 파란색 */
+
+/* ── 상세 보기 헤더 및 버튼 ── */
+.subChartWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.subChartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.subChartTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.backBtn {
+  background: none;
+  border: 1px solid #1f2d47;
+  color: #8fa3c4;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  background: #1f2d47;
+  color: #ffffff;
+}
+
+/* ── 데이터 없음 안내 ── */
+.placeholder {
+  color: #4a6080;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}

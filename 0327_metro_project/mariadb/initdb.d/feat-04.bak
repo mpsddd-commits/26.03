@@ -1,0 +1,186 @@
+※ 01호선 ~ 04호선 데이터 누락 이슈 발생 ※
+
+-- ===================================================================
+-- 1. `feat_04` 테이블 생성
+-- : 지하철 호선별 요일 이용 행태 분석 (METRO-04)
+-- ===================================================================
+
+CREATE TABLE db_metro.`feat_04` (
+	`연도` INT NOT NULL,
+	`호선` VARCHAR(50) NOT NULL,
+	`역번호` VARCHAR(50) NOT NULL,
+	`역명` VARCHAR(200) NOT NULL,
+	`요일명` VARCHAR(10) NOT NULL,
+	`요일코드` INT NOT NULL,
+	`구분` VARCHAR(10) NOT NULL,
+	`합계인원` DECIMAL(18, 2) DEFAULT 0,
+	`평균인원` DECIMAL(15, 2) DEFAULT 0,
+	`합계심야인원` DECIMAL(18, 2) DEFAULT 0,
+	PRIMARY KEY (`연도`, `호선`, `역번호`, `요일코드`, `구분`)
+)
+ENGINE=INNODB 
+DEFAULT CHARSET=UTF8MB4
+;
+
+-- 조회 성능 최적화 인덱스 추가
+CREATE INDEX idx_feat_04 
+ON db_metro.`feat_04` 
+(`연도`, `호선`, `역명`, `요일코드`)
+;
+
+
+-- ===================================================================
+-- 2. `feat_04` 테이블 정제 및 적재
+-- ===================================================================
+
+-- [ 1단계 : unpivot 및 테이블 결합(호선 정보 + 요일 정보) ]
+-- : 10명 미만 제외 및 요일 테이블 조인
+
+CREATE TABLE db_metro.`unpivot_table2` AS
+SELECT
+    YEAR(s.`날짜`) AS 연도,
+    l.`호선`,
+    s.`역번호`,
+    s.`역명`,
+    s.`구분`,
+    y.`코드` AS 요일코드,
+    y.`요일` AS 요일명,
+    t.`시간대`,
+    CASE 
+        WHEN t.시간대 = '05~06' THEN IF(s.`05~06` REGEXP '^[0-9.]+$', CAST(s.`05~06` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '06~07' THEN IF(s.`06~07` REGEXP '^[0-9.]+$', CAST(s.`06~07` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '07~08' THEN IF(s.`07~08` REGEXP '^[0-9.]+$', CAST(s.`07~08` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '08~09' THEN IF(s.`08~09` REGEXP '^[0-9.]+$', CAST(s.`08~09` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '09~10' THEN IF(s.`09~10` REGEXP '^[0-9.]+$', CAST(s.`09~10` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '10~11' THEN IF(s.`10~11` REGEXP '^[0-9.]+$', CAST(s.`10~11` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '11~12' THEN IF(s.`11~12` REGEXP '^[0-9.]+$', CAST(s.`11~12` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '12~13' THEN IF(s.`12~13` REGEXP '^[0-9.]+$', CAST(s.`12~13` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '13~14' THEN IF(s.`13~14` REGEXP '^[0-9.]+$', CAST(s.`13~14` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '14~15' THEN IF(s.`14~15` REGEXP '^[0-9.]+$', CAST(s.`14~15` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '15~16' THEN IF(s.`15~16` REGEXP '^[0-9.]+$', CAST(s.`15~16` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '16~17' THEN IF(s.`16~17` REGEXP '^[0-9.]+$', CAST(s.`16~17` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '17~18' THEN IF(s.`17~18` REGEXP '^[0-9.]+$', CAST(s.`17~18` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '18~19' THEN IF(s.`18~19` REGEXP '^[0-9.]+$', CAST(s.`18~19` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '19~20' THEN IF(s.`19~20` REGEXP '^[0-9.]+$', CAST(s.`19~20` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '20~21' THEN IF(s.`20~21` REGEXP '^[0-9.]+$', CAST(s.`20~21` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '21~22' THEN IF(s.`21~22` REGEXP '^[0-9.]+$', CAST(s.`21~22` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '22~23' THEN IF(s.`22~23` REGEXP '^[0-9.]+$', CAST(s.`22~23` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '23~24' THEN IF(s.`23~24` REGEXP '^[0-9.]+$', CAST(s.`23~24` AS DECIMAL(15,2)), 0)
+        WHEN t.시간대 = '24~'   THEN IF(s.`24~` REGEXP '^[0-9.]+$', CAST(s.`24~` AS DECIMAL(15,2)), 0)
+    END AS 인원,
+    CASE WHEN t.시간대 IN ('22~23', '23~24', '24~') THEN 1 ELSE 0 END AS 심야플래그
+FROM db_metro.seoul_metro AS s
+INNER JOIN db_metro.metro_line AS l ON s.역번호 = l.역번호 AND s.역명 = l.역명
+INNER JOIN db_metro.`요일` AS y ON s.요일 = y.코드
+CROSS JOIN (
+    SELECT '05~06' AS 시간대 UNION ALL SELECT '06~07' UNION ALL SELECT '07~08' UNION ALL 
+    SELECT '08~09' UNION ALL SELECT '09~10' UNION ALL SELECT '10~11' UNION ALL 
+    SELECT '11~12' UNION ALL SELECT '12~13' UNION ALL SELECT '13~14' UNION ALL 
+    SELECT '14~15' UNION ALL SELECT '15~16' UNION ALL SELECT '16~17' UNION ALL 
+    SELECT '17~18' UNION ALL SELECT '18~19' UNION ALL SELECT '19~20' UNION ALL 
+    SELECT '20~21' UNION ALL SELECT '21~22' UNION ALL SELECT '22~23' UNION ALL 
+    SELECT '23~24' UNION ALL SELECT '24~'
+) AS t
+WHERE s.`역명` IS NOT NULL
+HAVING 인원 >= 10
+;
+
+
+-- [ 2단계 : 역 단위/호선 단위 집계 및 `feat_04` 테이블 적재 ]
+
+INSERT INTO db_metro.`feat_04` (
+    `연도`, `호선`, `역번호`, `역명`, `요일명`, `요일코드`, `구분`, 
+    `합계인원`, `평균인원`, `합계심야인원`
+)
+SELECT
+    `연도`, `호선`, `역번호`, `역명`, `요일명`, `요일코드`, `구분`,
+    SUM(`인원`),
+    CAST(ROUND(AVG(`인원`), 2) AS DECIMAL(15,2)),
+    SUM(CASE WHEN 심야플래그 = 1 THEN `인원` ELSE 0 END)
+FROM db_metro.`unpivot_table2`
+GROUP BY `연도`, `호선`, `역번호`, `요일코드`, `구분`, `역명`
+;
+
+
+
+-- ===================================================================
+-- 3. 검증 SQL문
+-- ===================================================================
+
+-- [ 1. `unpivot_table2` 검증 ]
+
+-- (1) 서울역(샘플)의 각 호선별/구분별 데이터 개수 확인
+SELECT 
+    `역명`, 
+    `역번호`, 
+    `호선`, 
+    `구분`, 
+    `요일명`, 
+    COUNT(*) AS 시간대별_데이터수
+FROM db_metro.`unpivot_table2`
+WHERE `역명` = '서울역' 
+  AND `연도` = 2020
+GROUP BY `역명`, `역번호`, `호선`, `구분`, `요일명`
+ORDER BY `호선` ASC, `요일코드` ASC
+;
+
+
+-- (2) 심야 데이터 검증
+SELECT `연도`, `호선`, `역명`, `시간대`, `인원`, `심야플래그`
+FROM db_metro.`unpivot_table2`
+WHERE `역명` = '서울역'
+  AND `시간대` IN ('22~23', '23~24', '24~')
+ORDER BY `호선` ASC, `시간대` DESC
+LIMIT 50
+;
+
+
+-- [ 2. `feat_04` 테이블 검증 ]
+
+-- (1) 데이터 적재 기본 확인 (건수 및 요약)
+-- 전체 행 수 확인
+SELECT COUNT(*) AS total_rows FROM db_metro.`feat_04`
+;
+
+-- 연도별, 호선별 데이터 분포 확인 (누락된 연도나 호선이 있는지)
+SELECT 연도, 호선, COUNT(*) AS 건수
+FROM db_metro.`feat_04`
+GROUP BY 연도, 호선
+ORDER BY 연도 DESC, 호선 ASC
+;
+
+
+-- (2) PK 제약 및 중복 데이터 확인
+-- 동일 키값으로 데이터가 중복되는지 확인 (결과 없어야 정상임)
+SELECT 연도, 호선, 역번호, 요일코드, 구분, COUNT(*)
+FROM db_metro.`feat_04`
+GROUP BY 연도, 호선, 역번호, 요일코드, 구분
+HAVING COUNT(*) > 1
+;
+
+
+-- (3) 심야 인원과 평균인원 계산이 정확한지 검증
+-- 강남역(샘플)의 요일별 승하차 데이터 확인
+-- 합계인원 대비 합계심야인원 비율이 논리적으로 타당한지(심야인원이 더 클 수 없음) 확인
+SELECT 
+    역명, 요일명, 구분, 합계인원, 합계심야인원, 평균인원,
+    (합계심야인원 / 합계인원 * 100) AS 심야비중
+FROM db_metro.`feat_04`
+WHERE 역명 LIKE '%강남%'
+ORDER BY 요일코드, 구분
+;
+
+
+-- (4) `unpivot_table2`와 비교 검증 (데이터 손실 여부 체크)
+-- 집계값과 최종 테이블의 합계 비교
+SELECT 'unpivot_table2' AS table_name, SUM(인원) AS total_sum 
+FROM db_metro.`unpivot_table2`
+UNION ALL
+SELECT 'feat_04' AS table_name, SUM(합계인원) AS total_sum FROM db_metro.`feat_04`
+;
+
+-- (5) 데이터 정제 조건 확인 (10명 미만 제외)
+-- 합계 인원이 0이거나 비정상적으로 적은 데이터가 있는지 확인
+SELECT * FROM db_metro.`feat_04` 
+WHERE 합계인원 < 10 
+ORDER BY 합계인원 ASC;

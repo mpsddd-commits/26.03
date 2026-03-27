@@ -1,0 +1,80 @@
+/* Placeholder.module.css */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* 요소 간 간격 확대 */
+  
+  /* ✅ 사이드바 너비 확보 */
+  margin-left: var(--nav-w); 
+  width: calc(100% - var(--nav-w));
+  
+  min-height: calc(100vh - 115px);
+  /* ✅ padding-top을 60px~80px 정도로 늘려 전체적으로 아래로 내립니다 */
+  padding: 60px 40px 40px 40px; 
+  box-sizing: border-box;
+  background-color: var(--bg-surface);
+  overflow-x: hidden;
+}
+
+/* 헤더 영역을 위한 추가 스타일 (선택사항) */
+.header {
+  width: 100%;
+  flex-shrink: 0;
+  /* 상단 필터바가 너무 딱 붙어있지 않게 추가 여백 */
+  margin-bottom: 30px; 
+}
+
+.chartContainer {
+  flex: 1;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  min-height: 480px;
+  position: relative;
+  width: 100%;
+}
+.placeholder {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.icon { color: var(--border-light); }
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.6;
+  font-family: 'Space Mono', monospace;
+}
+
+.metaRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.badge {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.5px;
+}

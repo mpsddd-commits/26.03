@@ -1,0 +1,54 @@
+/* Header.css */
+.header {
+  position: fixed;
+  top: 0;
+  /* ✅ 사이드바 너비만큼 정확히 띄웁니다 */
+  left: var(--nav-w); 
+  right: 0;
+  height: var(--header-h);
+  background: var(--bg-surface);
+  
+  /* ✅ 보더 두께가 너비에 영향을 주지 않도록 설정 */
+  box-sizing: border-box; 
+  border-bottom: 1px solid var(--border);
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  z-index: 90;
+  backdrop-filter: blur(8px);
+}
+
+.left { display: flex; flex-direction: column; gap: 2px; }
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.2px;
+}
+
+.desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.right { display: flex; gap: 8px; align-items: center; }
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 10px;
+  font-family: 'Space Mono', monospace;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.badge:last-child { color: var(--accent-green); border-color: rgba(16,217,160,0.3); }

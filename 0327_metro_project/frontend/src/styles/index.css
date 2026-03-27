@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Core Palette ── */
+  --bg-base:       #080c12;
+  --bg-surface:    #0e1420;
+  --bg-elevated:   #141b2d;
+  --bg-hover:      #1c2540;
+  --border:        #1f2d47;
+  --border-light:  #2a3a57;
+
+  /* ── Accent ── */
+  --accent:        #3b82f6;
+  --accent-dim:    rgba(59,130,246,0.15);
+  --accent-glow:   rgba(59,130,246,0.35);
+  --accent-green:  #10d9a0;
+  --accent-orange: #f59e0b;
+  --accent-red:    #ef4444;
+
+  /* ── Text ── */
+  --text-primary:  #e8f0fe;
+  --text-secondary:#8fa3c4;
+  --text-muted:    #4a6080;
+  --text-accent:   #60a5fa;
+
+  /* ── Heatmap Colors ── */
+  --heat-0: #0a1628;
+  --heat-1: #0d2040;
+  --heat-2: #0d3060;
+  --heat-3: #0f4c8a;
+  --heat-4: #1a65b8;
+  --heat-5: #2980e8;
+  --heat-6: #4da3ff;
+
+  /* ── Layout ── */
+  --nav-w: 220px;
+  --header-h: 60px;
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  font-family: 'DM Sans', sans-serif;
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+button { cursor: pointer; font-family: inherit; }
+a { text-decoration: none; color: inherit; }
